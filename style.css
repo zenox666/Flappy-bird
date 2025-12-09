@@ -1,0 +1,16 @@
+body {
+  background: #222;
+  color: white;
+  font-family: 'Press Start 2P',monospace;
+  text-align: center;
+}
+
+h1 {
+  margin: 20px 0;
+}
+
+#canvas {
+  background: url("./images/flappybirdbg.png");
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
