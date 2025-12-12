@@ -13,7 +13,9 @@ let bird={
     width: birdWidth,
     height: birdHeight
 }
-let birdImg;
+let birdImgs=[];
+let birdImgsIndex=0;
+
 
 let pipeArray = [];
 let pipeWidth = 64;
@@ -41,11 +43,11 @@ window.addEventListener("load",function(){
 
     context = board.getContext("2d");
 
-    birdImg = new Image();
-    birdImg.src = "./images/flappybird.png";
-    birdImg.addEventListener("load",function(){
-        context.drawImage(birdImg,bird.x,bird.y,bird.width,bird.height);
-    })
+    for(let i=0;i<4;i++){
+        let birdImg = new Image();
+        birdImg.src = "images/flappybird"+i+".png";
+        birdImgs.push(birdImg);
+    }
 
     topPipeImg = new Image();
     topPipeImg.src = "./images/toppipe.png";
@@ -54,11 +56,12 @@ window.addEventListener("load",function(){
 
     requestAnimationFrame(update);
     setInterval(placePipes,1500);
+    setInterval(animateBird,100);
+
     document.addEventListener("click",moveBird);
     document.addEventListener("keydown",moveBird);
     document.addEventListener("touchstart",moveBird);
-
-
+    
     marioAudio.play();
 })
 
@@ -71,7 +74,8 @@ function update(){
 
     velocityY += gravity;
     bird.y = Math.max(bird.y+velocityY, 0);
-    context.drawImage(birdImg,bird.x,bird.y,bird.width,bird.height);
+    context.drawImage(birdImgs[birdImgsIndex],bird.x,bird.y,bird.width,bird.height);
+
 
     if(bird.y>board.height){
         playSound("die");
@@ -120,6 +124,11 @@ function update(){
         marioAudio.currentTime=0;
     }   
     
+}
+
+function animateBird(){
+    birdImgsIndex++;
+    birdImgsIndex = birdImgsIndex % birdImgs.length;
 }
 
 function placePipes(){
