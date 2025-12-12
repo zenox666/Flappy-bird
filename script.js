@@ -92,9 +92,13 @@ function update(){
         pipeArray.shift();
     }
 
+    context.save();
     context.fillStyle = "white";
     context.font = "45px sans-serif";
-    context.fillText(score,5,50);
+    context.textAlign="left";
+    context.textBaseline="top";
+    context.fillText(score,10,10);
+    context.restore();
     if(gameOver){
         context.font = "30px 'Press Start 2P'";
         context.textAlign = "center";
@@ -134,12 +138,18 @@ function placePipes(){
 
 function moveBird(evt){
     if(evt.type==="keydown"){
-        if(evt.code==="Space" || evt.code==="ArrowUp" || evt.code==="keyW"){
+        if(evt.code==="Space" || evt.code==="ArrowUp"){
             jump();
+            if(gameOver){
+                restart();
+            }
         }
     }
     if(evt.type==="click"){
         jump();
+        if(gameOver){
+            restart();
+        }
     }
 }
 function jump(){
@@ -151,4 +161,12 @@ function detectCollision(b,p){
            b.x + b.width > p.x &&
            b.y  < p.y + p.height &&
            b.y + b.height > p.y;
+}
+
+function restart(){
+    bird.y =birdY;
+    pipeArray = [];
+    score =0;
+    gameOver = false;
+
 }
