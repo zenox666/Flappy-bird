@@ -30,6 +30,10 @@ let gravity = 0.5;
 let gameOver = false;
 let score=0;
 
+let marioAudio;
+marioAudio = new Audio("sounds/bgm_mario.mp3");
+marioAudio.loop = true;
+
 window.addEventListener("load",function(){
     board = document.querySelector("#canvas");
     board.width = boardWidth;
@@ -53,6 +57,9 @@ window.addEventListener("load",function(){
     document.addEventListener("click",moveBird);
     document.addEventListener("keydown",moveBird);
     document.addEventListener("touchstart",moveBird);
+
+
+    marioAudio.play();
 })
 
 function update(){
@@ -67,6 +74,7 @@ function update(){
     context.drawImage(birdImg,bird.x,bird.y,bird.width,bird.height);
 
     if(bird.y>board.height){
+        playSound("die");
         gameOver = true;
     }
 
@@ -79,11 +87,13 @@ function update(){
         if(!pipe.passed){
             if(bird.x > pipe.x+pipe.width){
                 score += 0.5;
+                playSound("point");
                 pipe.passed = true;
             }
         }
 
         if(detectCollision(bird,pipe)){
+            playSound("hit");
             gameOver = true;
         }
     }
@@ -103,9 +113,12 @@ function update(){
         context.font = "30px 'Press Start 2P'";
         context.textAlign = "center";
         context.textBaseline ="middle";
-        context.fillStyle = "#E61C17";
+        context.fillStyle = "white";
         context.fillText("Game Over",boardWidth/2,boardHeight/2);
-    }
+
+        marioAudio.pause();
+        marioAudio.currentTime=0;
+    }   
     
 }
 
@@ -139,23 +152,28 @@ function placePipes(){
 function moveBird(evt){
     if(evt.type==="keydown"){
         if(evt.code==="Space" || evt.code==="ArrowUp"){
-            jump();
+            if(marioAudio.paused){
+                marioAudio.play();
+            }
+            playSound("wing");
+            velocityY = -7;
             if(gameOver){
                 restart();
             }
         }
     }
     if(evt.type==="click"){
-        jump();
+        if(marioAudio.paused){
+            marioAudio.play();
+        }
+        playSound("wing");
+        velocityY = -7;
         if(gameOver){
             restart();
         }
     }
 }
-function jump(){
-    velocityY = -7;
-    
-}
+
 function detectCollision(b,p){
     return b.x < p.x + p.width &&
            b.x + b.width > p.x &&
@@ -163,10 +181,15 @@ function detectCollision(b,p){
            b.y + b.height > p.y;
 }
 
+function playSound(name){
+    var audio = new Audio("sounds/"+name+".mp3");
+    audio.play();
+}
+
 function restart(){
     bird.y =birdY;
     pipeArray = [];
     score =0;
     gameOver = false;
-
 }
+
