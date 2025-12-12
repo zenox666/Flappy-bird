@@ -27,6 +27,8 @@ let velocityX = -2;
 let velocityY = 0;
 let gravity = 0.5;
 
+let gameOver = false;
+
 window.addEventListener("load",function(){
     board = document.querySelector("#canvas");
     board.width = boardWidth;
@@ -54,20 +56,35 @@ window.addEventListener("load",function(){
 
 function update(){
     requestAnimationFrame(update);
+    if(gameOver){
+        return;
+    }
     context.clearRect(0,0,boardWidth,boardHeight);
 
     velocityY += gravity;
     bird.y = Math.max(bird.y+velocityY, 0);
     context.drawImage(birdImg,bird.x,bird.y,bird.width,bird.height);
 
+    if(bird.y>board.height){
+        gameOver = true;
+    }
+
     for(let i=0;i<pipeArray.length;i++){
         let pipe = pipeArray[i];
         pipe.x += velocityX;
+
         context.drawImage(pipe.img,pipe.x,pipe.y,pipe.width,pipe.height);
+
+        if(detectCollision(bird,pipe)){
+            gameOver = true;
+        }
     }
 }
 
 function placePipes(){
+    if(gameOver){
+        return;
+    }
     let randomPipeY = pipeY - pipeHeight/4 - Math.random()*pipeHeight/2 ;
     let topPipe={
         img: topPipeImg,
@@ -104,4 +121,10 @@ function moveBird(evt){
 function jump(){
     velocityY = -7;
     
+}
+function detectCollision(b,p){
+    return b.x < p.x + p.width &&
+           b.x + b.width > p.x &&
+           b.y  < p.y + p.height &&
+           b.y + b.height > p.y;
 }
