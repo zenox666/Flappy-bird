@@ -24,6 +24,8 @@ let topPipeImg;
 let bottomPipeImg;
 
 let velocityX = -2;
+let velocityY = 0;
+let gravity = 0.5;
 
 window.addEventListener("load",function(){
     board = document.querySelector("#canvas");
@@ -45,13 +47,17 @@ window.addEventListener("load",function(){
 
     requestAnimationFrame(update);
     setInterval(placePipes,1500);
-
+    document.addEventListener("click",moveBird);
+    document.addEventListener("keydown",moveBird);
+    document.addEventListener("touchstart",moveBird);
 })
 
 function update(){
     requestAnimationFrame(update);
     context.clearRect(0,0,boardWidth,boardHeight);
 
+    velocityY += gravity;
+    bird.y = Math.max(bird.y+velocityY, 0);
     context.drawImage(birdImg,bird.x,bird.y,bird.width,bird.height);
 
     for(let i=0;i<pipeArray.length;i++){
@@ -84,3 +90,18 @@ function placePipes(){
     }
     pipeArray.push(bottomPipe);
 } 
+
+function moveBird(evt){
+    if(evt.type==="keydown"){
+        if(evt.code==="Space" || evt.code==="ArrowUp" || evt.code==="keyW"){
+            jump();
+        }
+    }
+    if(evt.type==="click"){
+        jump();
+    }
+}
+function jump(){
+    velocityY = -7;
+    
+}
