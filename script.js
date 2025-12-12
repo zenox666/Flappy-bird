@@ -28,6 +28,7 @@ let velocityY = 0;
 let gravity = 0.5;
 
 let gameOver = false;
+let score=0;
 
 window.addEventListener("load",function(){
     board = document.querySelector("#canvas");
@@ -75,10 +76,33 @@ function update(){
 
         context.drawImage(pipe.img,pipe.x,pipe.y,pipe.width,pipe.height);
 
+        if(!pipe.passed){
+            if(bird.x > pipe.x+pipe.width){
+                score += 0.5;
+                pipe.passed = true;
+            }
+        }
+
         if(detectCollision(bird,pipe)){
             gameOver = true;
         }
     }
+
+    while(pipeArray.length>0 && pipeArray[0].x< -pipeWidth){
+        pipeArray.shift();
+    }
+
+    context.fillStyle = "white";
+    context.font = "45px sans-serif";
+    context.fillText(score,5,50);
+    if(gameOver){
+        context.font = "30px 'Press Start 2P'";
+        context.textAlign = "center";
+        context.textBaseline ="middle";
+        context.fillStyle = "#E61C17";
+        context.fillText("Game Over",boardWidth/2,boardHeight/2);
+    }
+    
 }
 
 function placePipes(){
